@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FSOCIETY SPAM NGL BY BYEXE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: monospace;
+      text-align: center;
+      padding-top: 20px;
+    }
+    .logo {
+      width: 180px;
+      margin-bottom: 10px;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px red;
+    }
+    h1 {
+      font-size: 22px;
+      letter-spacing: 2px;
+      margin-bottom: 0;
+    }
+    .tagline {
+      color: red;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #111;
+      color: #ff0000;
+      border: 1px solid #ff0000;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    button {
+      background-color: red;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #status {
+      color: #ff0000;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+    #trafficLog {
+      margin-top: 15px;
+      font-size: 13px;
+      max-height: 300px;
+      overflow-y: auto;
+      text-align: left;
+      background-color: #000;
+      border: 1px solid red;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="container">
+    <img class="logo" src="https://files.catbox.moe/i4hmsr.png" alt="fsociety" />
+    <h1>LOGIN FSOCIETY</h1>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="checkLogin()">Login</button>
+    <p id="loginStatus" style="color:red;"></p>
+  </div>
+
+  <!-- MAIN PAGE -->
+  <div id="mainApp" class="container" style="display:none;">
+    <img class="logo" src="https://files.catbox.moe/i4hmsr.png" alt="fsociety" />
+    <h1>FSOCIETY</h1>
+    <p class="tagline">328</p>
+    <p>في ظل الظروف المتغيرة، سوف يظهر الشكل الحقيقي للإنسان</p>
+<p class="tagline">pada kondisi yang berubah-ubah, akan tampak sosok asli manusia</p>
+    <input type="text" id="targetUrl" placeholder="Masukan URL Target NGL" />
+    <input type="number" id="jumlahPesan" placeholder="Jumlah Pesan" />
+    <input type="text" id="isiPesan" placeholder="Isi Pesan (bebas)" />
+    <button onclick="startAttack()">Kirim Pesanan</button>
+<button onclick="startAttack()">Kirim Pesanan</button>
+<button onclick="stopAttack()">STOP SPAM</button>
+    <p id="status"></p>
+    <div id="trafficLog"></div>
+  </div>
+<script>
+let attackInterval;
+let apiSwitch = 0; // 0 = api1, 1 = api2
+
+function checkLogin() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    const loginStatus = document.getElementById("loginStatus");
+
+    if (user === "tes" && pass === "12345") {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("mainApp").style.display = "block";
+    } else {
+        loginStatus.innerText = "Username atau Password salah!";
+    }
+}
+
+function startAttack() {
+    const url = document.getElementById('targetUrl').value.trim();
+    const jumlah = parseInt(document.getElementById('jumlahPesan').value);
+    const pesan = encodeURIComponent(document.getElementById('isiPesan').value.trim());
+    const status = document.getElementById('status');
+    const trafficLog = document.getElementById('trafficLog');
+
+    if (!url || !jumlah || !pesan) {
+        status.textContent = 'Semua kolom wajib diisi.';
+        return;
+    }
+
+    status.textContent = `Mengirim ${jumlah} pesan ke ${url}...`;
+    trafficLog.innerHTML = '';
+    let count = 0;
+    let switchCount = 0;
+
+    attackInterval = setInterval(() => {
+        count++;
+        switchCount++;
+
+        let apiUrl;
+        if (apiSwitch === 0) {
+            apiUrl = `https://zelapioffciall.dpdns.org/tools/ngl?link=${encodeURIComponent(url)}&text=${pesan}`;
+        } else {
+            apiUrl = `https://api.siputzx.my.id/api/tools/ngl?link=${encodeURIComponent(url)}&text=${pesan}`;
+        }
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                trafficLog.innerHTML += `<div>API-${apiSwitch + 1} | Pesan ke-${count} status: ${data.status ? '✅ Berhasil' : '❌ Gagal'}</div>`;
+                trafficLog.scrollTop = trafficLog.scrollHeight;
+            })
+            .catch(() => {
+                trafficLog.innerHTML += `<div>API-${apiSwitch + 1} | Pesan ke-${count} ❌ Error jaringan.</div>`;
+                trafficLog.scrollTop = trafficLog.scrollHeight;
+            });
+
+        if (switchCount >= 5) {
+            apiSwitch = apiSwitch === 0 ? 1 : 0;
+            switchCount = 0;
+        }
+
+        if (count >= jumlah) {
+            clearInterval(attackInterval);
+            status.textContent = `Selesai mengirim ${jumlah} pesan.`;
+        }
+    }, 500);
+}
+
+function stopAttack() {
+    clearInterval(attackInterval);
+    document.getElementById('status').textContent = '⛔ SPAM DIHENTIKAN SECARA MANUAL';
+}
+</script>
+
+</body>
+</html>
